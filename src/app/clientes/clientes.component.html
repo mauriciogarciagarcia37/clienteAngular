@@ -7,7 +7,10 @@
         Crear Cliente
       </button>
     </div>
-    <table class="table table-bordered table-striped">
+    <div *ngIf="clientes?.length == 0" class="alert-info">
+      No hay regristro en la base de datos!
+    </div>
+    <table class="table table-bordered table-striped" *ngIf="clientes?.length > 0">
       <thead>
         <tr>
           <th>id</th>
