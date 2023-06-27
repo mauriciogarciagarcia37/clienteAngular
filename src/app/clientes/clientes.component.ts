@@ -15,7 +15,7 @@ export class ClientesComponent implements OnInit {
 
   constructor( private clienteService: ClienteService ) { }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
 
     this.clienteService.getClientes().subscribe(
       clientes => this.clientes = clientes
@@ -23,7 +23,7 @@ export class ClientesComponent implements OnInit {
 
   }
 
-  delete(cliente: Cliente): void {
+  public delete(cliente: Cliente): void {
     const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
         confirmButton: 'btn btn-success',
@@ -46,7 +46,7 @@ export class ClientesComponent implements OnInit {
           response => {
             this.clientes = this.clientes.filter(cli => cli !== cliente)
             swalWithBootstrapButtons.fire(
-              'Cliente Eliminadi!',
+              'Cliente Eliminado!',
               `Cliente ${cliente.nombre} elimanado con exito.`,
               'success'
             )

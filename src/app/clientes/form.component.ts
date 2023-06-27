@@ -3,7 +3,7 @@
     import {ClienteService} from './cliente.service';
     import {Router, ActivatedRoute} from '@angular/router';
     import swal from 'sweetalert2';
-import { Observable } from 'rxjs';
+   
 
     @Component({
       selector: 'app-form',
@@ -13,16 +13,19 @@ import { Observable } from 'rxjs';
 
     public cliente: Cliente = new Cliente();
     public titulo:string = "Crear Cliente";
+    public errores: String[];
 
-      constructor(private clienteService: ClienteService,
+      constructor(
+      private clienteService: ClienteService,
       private router: Router, 
       private activateedRoute: ActivatedRoute) { }
+   
 
-      ngOnInit(): void {
+      public ngOnInit(): void {
         this.cargarCliente()
       }
 
-      cargarCliente(): void {
+      public cargarCliente(): void {
         this.activateedRoute.params.subscribe( params => {
           let id = params['id']
 
@@ -35,21 +38,42 @@ import { Observable } from 'rxjs';
       }
 
       public create(): void{
-        this.clienteService.create(this.cliente).subscribe(
-          cliente =>{
+        this.clienteService.create(this.cliente)
+        .subscribe({
+            next: cliente =>{
             this.router.navigate(['/clientes'])
-            swal.fire('Nuevo cliente',`Cliente ${cliente.nombre} creado con exito`, 'success')
-          }
-        );
+            swal.fire('Nuevo cliente',`El cliente ${cliente.nombre} ha sido creado con exito`, 'success')
+            },
+            error:err => {
+              this.errores = err.error.errors as String[];
+              console.error('Codigo del error desde el backend: ' + err.status);
+              console.error(err.error.errors);
+    
+            },
+            complete: () => {
+              console.log("Completo");
+              this.router.navigate(['/clientes']);
+            }
+
+          });
       }
 
-      update(): void{
+    public update(): void{
         this.clienteService.update(this.cliente)
-        .subscribe( cliente => {
+        .subscribe({
+          next: json => {
           this.router.navigate(['/clientes'])
-          swal.fire('Cliente Actulizado', `Cliente ${cliente.nombre} actualizado con exito!`, 'success')
-        })
-      }
-
-     
+          swal.fire('Cliente Actualizado', `${json.mensaje}: ${json.cliente.nombre}`, 'success')
+        },
+        error:err => {
+          this.errores = err.error.errors as String[];
+          console.error('Codigo del error desde el backend: ' + err.status);
+          console.error(err.error.errors);
+        },
+        complete: () => {
+          console.log("Completo");
+          this.router.navigate(['/clientes']);
+        }
+      });
     }
+  }
